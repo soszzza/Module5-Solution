@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>David Chu's China Bistro</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Oxygen:wght@300;400;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Oxygen', sans-serif;
+      background-color: #3f0d12;
+      background-image: linear-gradient(315deg, #3f0d12 0%, #a71d31 74%);
+      min-height: 100vh;
+      color: #333;
+    }
+    .font-serif-custom {
+      font-family: 'Lora', serif;
+    }
+    .tile-hover {
+      transition: all 0.3s ease;
+    }
+    .tile-hover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.3);
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #2b080c;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #d97706;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen text-slate-800 antialiased">
+
+  <!-- HEADER / NAVIGATION -->
+  <header class="bg-zinc-900 border-b-4 border-amber-500 shadow-xl sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-24">
+        
+        <!-- Logo & Branding -->
+        <div class="flex items-center space-x-3">
+          <a href="#" onclick="app.loadHome(); return false;" class="group flex items-center space-x-3">
+            <div class="w-14 h-14 bg-amber-500 rounded-full flex items-center justify-center text-zinc-900 font-bold text-2xl border-2 border-amber-300 shadow-inner group-hover:bg-amber-400 transition-colors">
+              <i class="fa-solid fa-utensils"></i>
+            </div>
+            <div>
+              <h1 class="text-xl sm:text-2xl font-bold font-serif-custom text-amber-400 tracking-wide leading-tight group-hover:text-amber-300">
+                David Chu's China Bistro
+              </h1>
+              <p class="text-xs text-zinc-400 flex items-center gap-1">
+                <span class="text-amber-500">★</span> KOSHER CERTIFIED
+              </p>
+            </div>
+          </a>
+        </div>
+
+        <!-- Desktop Navigation Links -->
+        <nav class="hidden md:flex items-center space-x-6 text-sm font-semibold text-zinc-200">
+          <button onclick="app.loadHome();" class="hover:text-amber-400 transition flex items-center gap-2 px-3 py-2 rounded-md hover:bg-zinc-800">
+            <i class="fa-solid fa-house text-amber-500"></i> Home
+          </button>
+          <button onclick="app.loadMenuCategories();" class="hover:text-amber-400 transition flex items-center gap-2 px-3 py-2 rounded-md hover:bg-zinc-800">
+            <i class="fa-solid fa-book-open text-amber-500"></i> Menu
+          </button>
+          <button onclick="app.loadRandomSpecials();" class="hover:text-amber-400 transition flex items-center gap-2 px-3 py-2 rounded-md hover:bg-zinc-800">
+            <i class="fa-solid fa-star text-amber-500"></i> Specials
+          </button>
+          <button onclick="app.scrollToFooter();" class="hover:text-amber-400 transition flex items-center gap-2 px-3 py-2 rounded-md hover:bg-zinc-800">
+            <i class="fa-solid fa-circle-info text-amber-500"></i> About & Hours
+          </button>
+        </nav>
+
+        <!-- Phone / Delivery Badge -->
+        <div class="hidden lg:flex flex-col items-end text-right border-l border-zinc-700 pl-6">
+          <a href="tel:410-602-5008" class="text-amber-400 text-lg font-bold hover:text-amber-300 transition flex items-center gap-2">
+            <i class="fa-solid fa-phone text-xs"></i> 410-602-5008
+          </a>
+          <span class="text-xs text-zinc-400 uppercase tracking-widest">* We Deliver</span>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <div class="md:hidden flex items-center">
+          <button id="mobile-menu-btn" onclick="app.toggleMobileMenu()" class="text-zinc-300 hover:text-white focus:outline-none p-2">
+            <i class="fa-solid fa-bars text-2xl"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Dropdown Menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-zinc-800 border-t border-zinc-700 px-4 pt-2 pb-4 space-y-2">
+      <button onclick="app.loadHome(); app.toggleMobileMenu();" class="w-full text-left text-zinc-200 hover:bg-zinc-700 hover:text-amber-400 px-3 py-2 rounded-md font-medium flex items-center gap-3">
+        <i class="fa-solid fa-house text-amber-500 w-5"></i> Home
+      </button>
+      <button onclick="app.loadMenuCategories(); app.toggleMobileMenu();" class="w-full text-left text-zinc-200 hover:bg-zinc-700 hover:text-amber-400 px-3 py-2 rounded-md font-medium flex items-center gap-3">
+        <i class="fa-solid fa-book-open text-amber-500 w-5"></i> Menu Categories
+      </button>
+      <button onclick="app.loadRandomSpecials(); app.toggleMobileMenu();" class="w-full text-left text-zinc-200 hover:bg-zinc-700 hover:text-amber-400 px-3 py-2 rounded-md font-medium flex items-center gap-3">
+        <i class="fa-solid fa-star text-amber-500 w-5"></i> Today's Specials
+      </button>
+      <div class="pt-2 border-t border-zinc-700 flex justify-between items-center text-sm px-3 text-amber-400 font-semibold">
+        <span><i class="fa-solid fa-phone mr-2"></i> 410-602-5008</span>
+        <span class="text-xs text-zinc-400">* We Deliver</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Notice Banner -->
+    <div id="toast-banner" class="hidden mb-6 bg-amber-500/10 border border-amber-500/30 text-amber-200 px-4 py-3 rounded-xl flex items-center justify-between text-sm backdrop-blur-sm">
+      <div class="flex items-center space-x-2">
+        <i class="fa-solid fa-circle-info text-amber-400"></i>
+        <span id="toast-message">Welcome to David Chu's Bistro!</span>
+      </div>
+      <button onclick="document.getElementById('toast-banner').classList.add('hidden')" class="text-amber-400 hover:text-amber-200">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Main View Dynamic Outlet -->
+    <div id="main-content" class="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-6 sm:p-10 min-h-[500px]">
+      <!-- Content rendered via JS -->
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer id="bistro-footer" class="bg-zinc-900 text-zinc-300 border-t-2 border-amber-600 mt-12 text-sm">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <!-- Hours -->
+        <div class="bg-zinc-800/50 p-5 rounded-xl border border-zinc-700/50">
+          <h3 class="text-amber-400 font-bold text-lg mb-3 flex items-center gap-2">
+            <i class="fa-regular fa-clock"></i> Hours of Operation
+          </h3>
+          <ul class="space-y-1 text-zinc-300 text-sm">
+            <li class="flex justify-between"><span>Sun - Thurs:</span> <span class="font-semibold text-white">11:15am - 10:00pm</span></li>
+            <li class="flex justify-between"><span>Friday:</span> <span class="font-semibold text-white">11:15am - 2:30pm</span></li>
+            <li class="flex justify-between text-amber-500/80"><span>Saturday:</span> <span class="font-semibold">CLOSED</span></li>
+          </ul>
+        </div>
+
+        <!-- Address -->
+        <div class="bg-zinc-800/50 p-5 rounded-xl border border-zinc-700/50">
+          <h3 class="text-amber-400 font-bold text-lg mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-location-dot"></i> Location & Delivery
+          </h3>
+          <p class="text-zinc-300 leading-relaxed">
+            7105 Reisterstown Road<br>
+            Baltimore, MD 21215
+          </p>
+          <p class="mt-3 text-xs text-zinc-400 italic">
+            * Delivery area within 3-4 miles, minimum order of $20 + $3 charge.
+          </p>
+        </div>
+
+        <!-- Reviews / Quotes -->
+        <div class="bg-zinc-800/50 p-5 rounded-xl border border-zinc-700/50">
+          <h3 class="text-amber-400 font-bold text-lg mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-quote-left"></i> Customer Love
+          </h3>
+          <blockquote class="text-xs text-zinc-300 italic mb-3 border-l-2 border-amber-500 pl-3">
+            "The best authentic kosher Chinese food in Baltimore! Fresh, hot, and quick delivery."
+          </blockquote>
+          <blockquote class="text-xs text-zinc-300 italic border-l-2 border-amber-500 pl-3">
+            "The General Tso's Chicken and Wonton Soup are unmatched!"
+          </blockquote>
+        </div>
+
+      </div>
+
+      <div class="mt-8 pt-6 border-t border-zinc-800 text-center text-xs text-zinc-500 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <p>&copy; 2026 David Chu's China Bistro. All Rights Reserved.</p>
+        <p class="text-zinc-400">Coursera Full Stack Web Development - Module 5 Assignment Solution</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /**
+     * Complete Application Controller & Menu Data Store
+     * Built for dynamic client-side rendering with full offline capabilities
+     */
+    const app = (function () {
+
+      // Complete Dataset simulating the Coursera Firebase Database
+      const menuData = {
+        categories: [
+          { id: 1, name: "Lunch Specials", short_name: "L", instructions: "Served Monday through Friday from 11:15am to 3:00pm. Includes White Rice or Pork Fried Rice." },
+          { id: 2, name: "Soup", short_name: "SP", instructions: "Served with crispy fried noodles." },
+          { id: 3, name: "Chicken", short_name: "C", instructions: "Served with White Rice." },
+          { id: 4, name: "Beef", short_name: "B", instructions: "Served with White Rice." },
+          { id: 5, name: "Sushi Rolls", short_name: "SR", instructions: "Freshly prepared kosher certified sushi rolls." },
+          { id: 6, name: "Beverages", short_name: "DK", instructions: "Cold refreshing drinks." }
+        ],
+        menu_items: {
+          "L": [
+            { short_name: "L1", name: "General Tso's Chicken", description: "Crispy dark meat chicken in a sweet spicy garlic glaze.", price_small: 9.95, portion_small: "Pt.", price_large: 14.95, portion_large: "Qt." },
+            { short_name: "L2", name: "Beef with Broccoli", description: "Tender flank steak stir-fried with fresh broccoli florets in brown sauce.", price_small: 10.50, portion_small: "Pt.", price_large: 15.95, portion_large: "Qt." },
+            { short_name: "L3", name: "Kung Pao Shrimp", description: "Jumbo shrimp sautéed with peanuts, chili peppers, and diced vegetables.", price_small: 11.25, portion_small: "Pt.", price_large: 16.50, portion_large: "Qt." },
+            { short_name: "L4", name: "Vegetable Lo Mein", description: "Egg noodles tossed with shredded napa cabbage, carrots, and scallions.", price_small: 8.50, portion_small: "Pt.", price_large: 12.50, portion_large: "Qt." }
+          ],
+          "SP": [
+            { short_name: "SP1", name: "Wonton Soup", description: "Pork dumplings in seasoned chicken broth with scallions.", price_small: 3.50, portion_small: "Pt.", price_large: 6.25, portion_large: "Qt." },
+            { short_name: "SP2", name: "Egg Drop Soup", description: "Velvety egg ribbons in savory chicken broth.", price_small: 3.25, portion_small: "Pt.", price_large: 5.75, portion_large: "Qt." },
+            { short_name: "SP3", name: "Hot & Sour Soup", description: "Spicy & tangy broth with tofu, wood ear mushrooms, and bamboo shoots.", price_small: 3.95, portion_small: "Pt.", price_large: 6.95, portion_large: "Qt." }
+          ],
+          "C": [
+            { short_name: "C1", name: "Sesame Chicken", description: "Crispy fried chicken coated in sweet sesame sauce and toasted seeds.", price_small: 10.25, portion_small: "Pt.", price_large: 15.50, portion_large: "Qt." },
+            { short_name: "C2", name: "Chicken with Cashews", description: "Diced chicken stir-fried with crunchy roasted cashews in light brown sauce.", price_small: 9.95, portion_small: "Pt.", price_large: 14.95, portion_large: "Qt." },
+            { short_name: "C3", name: "Sweet & Sour Chicken", description: "Deep-fried chicken breast strips served with red sweet and sour sauce.", price_small: 9.75, portion_small: "Pt.", price_large: 14.50, portion_large: "Qt." }
+          ],
+          "B": [
+            { short_name: "B1", name: "Pepper Steak with Onions", description: "Sliced steak stir-fried with sweet bell peppers and sweet onions.", price_small: 11.50, portion_small: "Pt.", price_large: 16.95, portion_large: "Qt." },
+            { short_name: "B2", name: "Mongolian Beef", description: "Sautéed beef with scallions and onions in a savory spicy brown glaze.", price_small: 11.95, portion_small: "Pt.", price_large: 17.25, portion_large: "Qt." }
+          ],
+          "SR": [
+            { short_name: "SR1", name: "California Roll", description: "Crab stick, avocado, and cucumber wrapped in seaweed and sushi rice.", price_small: null, portion_small: null, price_large: 7.50, portion_large: "8 Pcs" },
+            { short_name: "SR2", name: "Spicy Tuna Roll", description: "Fresh yellowfin tuna tossed with spicy mayo and cucumber.", price_small: null, portion_small: null, price_large: 8.95, portion_large: "8 Pcs" },
+            { short_name: "SR3", name: "Salmon Avocado Roll", description: "Atlantic raw salmon with fresh California avocado.", price_small: null, portion_small: null, price_large: 8.50, portion_large: "8 Pcs" }
+          ],
+          "DK": [
+            { short_name: "DK1", name: "Tsingtao Beer", description: "Imported Chinese lager (12 oz bottle).", price_small: null, portion_small: null, price_large: 5.50, portion_large: "Bottle" },
+            { short_name: "DK2", name: "Iced Green Tea", description: "Freshly brewed unsweetened Jasmine green tea.", price_small: 2.25, portion_small: "16 oz", price_large: 3.50, portion_large: "32 oz" }
+          ]
+        }
+      };
+
+      // Target Content Container
+      const mainContent = document.getElementById("main-content");
+
+      /**
+       * Show Loading Spinner
+       */
+      function showLoading() {
+        mainContent.innerHTML = `
+          <div class="flex flex-col items-center justify-center py-20 space-y-4">
+            <div class="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+            <p class="text-zinc-600 font-semibold animate-pulse">Loading delicious items...</p>
+          </div>
+        `;
+      }
+
+      /**
+       * Display Toast Message Notification
+       */
+      function showToast(msg) {
+        const banner = document.getElementById("toast-banner");
+        const msgEl = document.getElementById("toast-message");
+        msgEl.textContent = msg;
+        banner.classList.remove("hidden");
+        setTimeout(() => {
+          banner.classList.add("hidden");
+        }, 4000);
+      }
+
+      /**
+       * Render Home View with Tiles
+       */
+      function loadHome() {
+        showLoading();
+        setTimeout(() => {
+          mainContent.innerHTML = `
+            <!-- Hero Banner -->
+            <div class="relative rounded-2xl overflow-hidden mb-8 shadow-md border border-amber-200">
+              <div class="bg-gradient-to-r from-zinc-900 via-zinc-800 to-amber-950 p-8 sm:p-12 text-white">
+                <span class="inline-block px-3 py-1 bg-amber-500 text-zinc-900 font-bold text-xs uppercase tracking-wider rounded-full mb-3">
+                  Award Winning Chinese Cuisine
+                </span>
+                <h2 class="text-3xl sm:text-5xl font-bold font-serif-custom text-amber-400 mb-4 leading-tight">
+                  Authentic Taste, Kosher Perfection.
+                </h2>
+                <p class="text-zinc-300 max-w-2xl text-sm sm:text-base mb-6 leading-relaxed">
+                  Welcome to David Chu's China Bistro! Enjoy handcrafted dishes, fresh vegetables, and traditional recipes cooked to order.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                  <button onclick="app.loadMenuCategories()" class="bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold px-6 py-3 rounded-xl shadow-lg transition flex items-center gap-2">
+                    <i class="fa-solid fa-utensils"></i> Explore Menu
+                  </button>
+                  <button onclick="app.loadRandomSpecials()" class="bg-zinc-800 hover:bg-zinc-700 text-amber-400 border border-amber-500/50 font-bold px-6 py-3 rounded-xl transition flex items-center gap-2">
+                    <i class="fa-solid fa-dice"></i> Surprise Special
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3 Main Interactive Tiles -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              
+              <!-- Tile 1: MENU -->
+              <div onclick="app.loadMenuCategories()" class="cursor-pointer bg-amber-50 hover:bg-amber-100 border-2 border-amber-200 rounded-2xl p-6 tile-hover flex flex-col justify-between group">
+                <div>
+                  <div class="w-16 h-16 bg-amber-500 text-zinc-900 rounded-2xl flex items-center justify-center text-2xl font-bold mb-4 shadow-md group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-book-open"></i>
+                  </div>
+                  <h3 class="text-2xl font-bold text-zinc-900 font-serif-custom mb-2 group-hover:text-amber-700 transition-colors">
+                    Menu Categories
+                  </h3>
+                  <p class="text-zinc-600 text-sm leading-relaxed mb-4">
+                    Browse our complete selection of Lunch Specials, Soups, Chicken, Beef, Sushi, and Drinks.
+                  </p>
+                </div>
+                <div class="flex items-center text-amber-700 font-bold text-sm group-hover:translate-x-2 transition-transform">
+                  View Categories <i class="fa-solid fa-arrow-right ml-2"></i>
+                </div>
+              </div>
+
+              <!-- Tile 2: SPECIALS (Dynamic Random Category) -->
+              <div onclick="app.loadRandomSpecials()" class="cursor-pointer bg-red-50 hover:bg-red-100 border-2 border-red-200 rounded-2xl p-6 tile-hover flex flex-col justify-between group">
+                <div>
+                  <div class="w-16 h-16 bg-red-600 text-white rounded-2xl flex items-center justify-center text-2xl font-bold mb-4 shadow-md group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-star"></i>
+                  </div>
+                  <div class="flex items-center gap-2 mb-1">
+                    <h3 class="text-2xl font-bold text-zinc-900 font-serif-custom group-hover:text-red-700 transition-colors">
+                      Today's Specials
+                    </h3>
+                  </div>
+                  <p class="text-zinc-600 text-sm leading-relaxed mb-4">
+                    Click here to reveal today's featured category! Every click picks a surprise category from our menu.
+                  </p>
+                </div>
+                <div class="flex items-center text-red-700 font-bold text-sm group-hover:translate-x-2 transition-transform">
+                  Pick Random Special <i class="fa-solid fa-dice ml-2"></i>
+                </div>
+              </div>
+
+              <!-- Tile 3: MAP / LOCATION -->
+              <div onclick="app.scrollToFooter()" class="cursor-pointer bg-zinc-50 hover:bg-zinc-100 border-2 border-zinc-200 rounded-2xl p-6 tile-hover flex flex-col justify-between group">
+                <div>
+                  <div class="w-16 h-16 bg-zinc-800 text-amber-400 rounded-2xl flex items-center justify-center text-2xl font-bold mb-4 shadow-md group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                  </div>
+                  <h3 class="text-2xl font-bold text-zinc-900 font-serif-custom mb-2 group-hover:text-zinc-700 transition-colors">
+                    Map & Directions
+                  </h3>
+                  <p class="text-zinc-600 text-sm leading-relaxed mb-4">
+                    Located at 7105 Reisterstown Rd, Baltimore. Check our opening hours and delivery coverage.
+                  </p>
+                </div>
+                <div class="flex items-center text-zinc-800 font-bold text-sm group-hover:translate-x-2 transition-transform">
+                  View Location & Hours <i class="fa-solid fa-arrow-right ml-2"></i>
+                </div>
+              </div>
+
+            </div>
+          `;
+        }, 200);
+      }
+
+      /**
+       * Render All Categories Grid
+       */
+      function loadMenuCategories() {
+        showLoading();
+        setTimeout(() => {
+          let categoriesHtml = `
+            <div class="mb-8">
+              <span class="text-amber-600 font-bold text-xs uppercase tracking-widest">Our Selection</span>
+              <h2 class="text-3xl font-bold font-serif-custom text-zinc-900">Menu Categories</h2>
+              <p class="text-zinc-500 text-sm mt-1">Select a category below to view specific dishes.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          `;
+
+          menuData.categories.forEach(cat => {
+            categoriesHtml += `
+              <div onclick="app.loadSingleCategory('${cat.short_name}')" class="cursor-pointer bg-white border border-zinc-200 hover:border-amber-500 rounded-xl p-5 shadow-sm hover:shadow-md transition-all flex items-center justify-between group">
+                <div class="flex items-center space-x-4">
+                  <div class="w-12 h-12 bg-amber-100 text-amber-700 rounded-xl flex items-center justify-center font-bold text-lg group-hover:bg-amber-500 group-hover:text-zinc-900 transition-colors">
+                    ${cat.short_name}
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-zinc-900 text-lg group-hover:text-amber-600 transition-colors">${cat.name}</h4>
+                    <p class="text-xs text-zinc-500">${menuData.menu_items[cat.short_name]?.length || 0} items available</p>
+                  </div>
+                </div>
+                <i class="fa-solid fa-chevron-right text-zinc-400 group-hover:text-amber-500 group-hover:translate-x-1 transition-all"></i>
+              </div>
+            `;
+          });
+
+          categoriesHtml += `</div>`;
+          mainContent.innerHTML = categoriesHtml;
+        }, 250);
+      }
+
+      /**
+       * Core Assignment Requirement:
+       * Picks a random category short_name from the categories list and loads its single category menu page.
+       */
+      function loadRandomSpecials() {
+        showLoading();
+        
+        // Step 1: Select a random category
+        const categories = menuData.categories;
+        const randomIndex = Math.floor(Math.random() * categories.length);
+        const randomCategory = categories[randomIndex];
+
+        showToast(`🎲 Special Selected: ${randomCategory.name}!`);
+
+        // Step 2: Load the items for this random category
+        setTimeout(() => {
+          loadSingleCategory(randomCategory.short_name, true);
+        }, 300);
+      }
+
+      /**
+       * Render Menu Items for a Single Category
+       */
+      function loadSingleCategory(shortName, isSpecial = false) {
+        showLoading();
+
+        setTimeout(() => {
+          const category = menuData.categories.find(c => c.short_name === shortName);
+          const items = menuData.menu_items[shortName] || [];
+
+          if (!category) {
+            mainContent.innerHTML = `<p class="text-red-500">Category not found.</p>`;
+            return;
+          }
+
+          let itemsHtml = `
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-zinc-200 pb-6 mb-6 gap-4">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="bg-amber-100 text-amber-800 text-xs font-bold px-2.5 py-1 rounded-md">Category (${category.short_name})</span>
+                  ${isSpecial ? '<span class="bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded-md animate-bounce"><i class="fa-solid fa-star"></i> Featured Special</span>' : ''}
+                </div>
+                <h2 class="text-3xl font-bold font-serif-custom text-zinc-900 mt-2">${category.name}</h2>
+                <p class="text-zinc-500 text-xs sm:text-sm italic mt-1">${category.instructions}</p>
+              </div>
+
+              <div class="flex gap-2">
+                <button onclick="app.loadMenuCategories()" class="text-xs bg-zinc-100 hover:bg-zinc-200 text-zinc-700 font-semibold px-3 py-2 rounded-lg transition">
+                  ← Back to Categories
+                </button>
+                <button onclick="app.loadRandomSpecials()" class="text-xs bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold px-3 py-2 rounded-lg transition flex items-center gap-1">
+                  <i class="fa-solid fa-rotate"></i> Try Another Special
+                </button>
+              </div>
+            </div>
+
+            <!-- Items List -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          `;
+
+          items.forEach(item => {
+            itemsHtml += `
+              <div class="bg-zinc-50 hover:bg-amber-50/50 border border-zinc-200/80 rounded-xl p-5 flex flex-col justify-between transition-colors">
+                <div>
+                  <div class="flex justify-between items-start mb-2">
+                    <span class="font-bold text-amber-800 text-xs bg-amber-100/80 px-2 py-0.5 rounded">${item.short_name}</span>
+                    <div class="text-right">
+                      ${item.price_small ? `<span class="text-xs text-zinc-500 font-semibold">${item.portion_small}: </span><span class="font-bold text-zinc-900 text-sm">$${item.price_small.toFixed(2)}</span>` : ''}
+                      ${item.price_small && item.price_large ? '<span class="text-zinc-300 mx-1">|</span>' : ''}
+                      ${item.price_large ? `<span class="text-xs text-zinc-500 font-semibold">${item.portion_large}: </span><span class="font-bold text-amber-700 text-base">$${item.price_large.toFixed(2)}</span>` : ''}
+                    </div>
+                  </div>
+                  <h4 class="font-bold text-zinc-900 text-lg mb-1">${item.name}</h4>
+                  <p class="text-zinc-600 text-xs leading-relaxed">${item.description}</p>
+                </div>
+              </div>
+            `;
+          });
+
+          itemsHtml += `</div>`;
+          mainContent.innerHTML = itemsHtml;
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 200);
+      }
+
+      function scrollToFooter() {
+        document.getElementById("bistro-footer").scrollIntoView({ behavior: 'smooth' });
+      }
+
+      function toggleMobileMenu() {
+        const menu = document.getElementById("mobile-menu");
+        menu.classList.toggle("hidden");
+      }
+
+      // Initialize Home View on Load
+      window.onload = function () {
+        loadHome();
+      };
+
+      return {
+        loadHome,
+        loadMenuCategories,
+        loadRandomSpecials,
+        loadSingleCategory,
+        scrollToFooter,
+        toggleMobileMenu
+      };
+
+    })();
+  </script>
+</body>
+</html>
